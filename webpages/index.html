@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User</title>
+  </head>
+
+  <body>
+    <script>
+      var azureUrl =
+        'https://fullstack-demo-backend.azurewebsites.net/instruments/';
+      var localUrl = 'http://localhost:8080/users/';
+
+      var baseUrl = localUrl;
+
+      var user = {
+        iD: 0,
+        firstName: '',
+        lastName: '',
+      };
+      var postingUser = {
+        firstName: '',
+        lastName: '',
+      };
+
+      async function postInstrument() {
+        let postUrl = baseUrl;
+
+        postingUser.firstName =
+          document.getElementById('firstName').value;
+        postingUser.lastName =
+          document.getElementById('lastName').value;
+
+        let response = await fetch(postUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
+          body: JSON.stringify(postingUser),
+        });
+
+        try {
+          let json = await response.json();
+
+          if (json) {
+            alert('User added');
+          } else {
+            alert('User NOT added');
+          }
+        } catch (error) {
+          alert('Error: could not post user');
+        }
+      }
+
+      async function getInstrument() {
+        let getUrl = baseUrl;
+        let inputId = document.getElementById('iD').value;
+        getUrl += inputId;
+        console.log(getUrl);
+
+        let response = await fetch(getUrl);
+
+        try {
+          let json = await response.json();
+          console.log(json);
+
+          user.iD = json.iD;
+          user.firstName = json.firstName;
+          user.lastName = json.lastName;
+          console.log(user);
+
+          document.getElementById('resultId').innerHTML = user.iD;
+          document.getElementById('resultFirstName').innerHTML =
+            user.firstName;
+          document.getElementById('resultlastName').innerHTML =
+            user.lastName;
+        } catch (error) {
+          alert('Error: could not find instrument');
+        }
+      }
+    </script>
+
+    <div class="block">
+      <h1>Users</h1>
+      <form>
+        <label for="firstName">First Name</label><br />
+        <input id="firstName" name="firstName" /></br>
+        <label for="lastName">Last Name</label><br />
+        <input id="lastName" name="lastName" /> </br>
+        <input
+          id="addButton"
+          name="addButton"
+          type="button"
+          onclick="postInstrument()"
+          value="Add"
+        />
+      </form>
+    </div>
+    <div class="block">
+      <h2>Get User By ID</h2>
+      <form>
+        <input id="iD" name="iD" />
+        <label for="iD">User ID</label>
+        <input
+          id="getButton"
+          type="button"
+          onclick="getInstrument()"
+          value="Get User"
+        />
+      </form>
+      <table>
+        <tr>
+          <th>User ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+        </tr>
+        <tr>
+          <td id="resultId"></td>
+          <td id="resultFirstName"></td>
+          <td id="resultlastName"></td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
